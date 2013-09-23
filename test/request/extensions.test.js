@@ -69,6 +69,30 @@ describe('authorization request extensions', function() {
       });
     });
     
+    describe('request with prompt including none with other values', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.grant(extensions())
+          .req(function(req) {
+            req.query = {};
+            req.query.prompt = 'none login';
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Prompt includes none with other values');
+      });
+    });
+    
   });
 
 });
