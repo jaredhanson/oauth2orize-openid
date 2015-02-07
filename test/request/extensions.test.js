@@ -23,7 +23,7 @@ describe('authorization request extensions', function() {
       var err, ext;
       
       before(function(done) {
-        chai.grant(extensions())
+        chai.oauth2orize.grant(extensions())
           .req(function(req) {
             req.query = {};
             req.query.nonce = 'a1b2c3';
@@ -73,7 +73,7 @@ describe('authorization request extensions', function() {
       var err, ext;
       
       before(function(done) {
-        chai.grant(extensions())
+        chai.oauth2orize.grant(extensions())
           .req(function(req) {
             req.query = {};
           })
@@ -102,7 +102,7 @@ describe('authorization request extensions', function() {
       var err, ext;
       
       before(function(done) {
-        chai.grant(extensions())
+        chai.oauth2orize.grant(extensions())
           .req(function(req) {
             req.query = {};
             req.query.prompt = 'login consent';
@@ -131,7 +131,7 @@ describe('authorization request extensions', function() {
       var err, ext;
       
       before(function(done) {
-        chai.grant(extensions())
+        chai.oauth2orize.grant(extensions())
           .req(function(req) {
             req.query = {};
             req.query.ui_locales = 'en es';
@@ -160,7 +160,7 @@ describe('authorization request extensions', function() {
       var err, ext;
       
       before(function(done) {
-        chai.grant(extensions())
+        chai.oauth2orize.grant(extensions())
           .req(function(req) {
             req.query = {};
             req.query.claims_locales = 'en es';
@@ -189,7 +189,7 @@ describe('authorization request extensions', function() {
       var err, ext;
       
       before(function(done) {
-        chai.grant(extensions())
+        chai.oauth2orize.grant(extensions())
           .req(function(req) {
             req.query = {};
             req.query.acr_values = '2 1';
@@ -218,7 +218,7 @@ describe('authorization request extensions', function() {
       var err, ext;
       
       before(function(done) {
-        chai.grant(extensions())
+        chai.oauth2orize.grant(extensions())
           .req(function(req) {
             req.query = {};
             req.query.prompt = 'none login';
