@@ -5,6 +5,11 @@
     $ npm install
     $ npm test
 
+## Examples
+
+This [example](https://github.com/jaredhanson/oauth2orize-openid/tree/master/examples/all-grants) demonstrates
+basic usage of the api.
+
 ## Credits
 
   - [Jared Hanson](http://github.com/jaredhanson)
