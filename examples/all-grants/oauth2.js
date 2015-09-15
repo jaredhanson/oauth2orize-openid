@@ -82,7 +82,7 @@ server.grant(oauth2orize_ext.grant.codeIdToken(
     // ... id_token =
     done(null, id_token);
   }
-}));
+));
 
 // 'code token' grant type.
 server.grant(oauth2orize_ext.grant.codeToken(
@@ -99,7 +99,7 @@ server.grant(oauth2orize_ext.grant.codeToken(
 
     done(null, code);
   }
-}));
+));
 
 // 'code id_token token' grant type.
 server.grant(oauth2orize_ext.grant.codeIdTokenToken(
@@ -122,7 +122,7 @@ server.grant(oauth2orize_ext.grant.codeIdTokenToken(
     // ... id_token =
     done(null, id_token);
   }
-}));
+));
 
 
 
