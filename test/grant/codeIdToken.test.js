@@ -33,8 +33,6 @@ describe('grant.codeIdToken', function() {
     function issueCode(){}
     function issueIDToken(){}
     
-    console.log(chai.oauth2orize.grant);
-    
     describe('request', function() {
       var err, out;
       
@@ -269,22 +267,20 @@ describe('grant.codeIdToken', function() {
   
 
   describe('decision handling', function() {
-    function issueCode(client, redirectURI, user, done) {
-      if (client.id == 'c123' && redirectURI == 'http://example.com/auth/callback' && user.id == 'u123') {
-        return done(null, 'xyz');
-      } else if (client.id == 'cUNAUTHZ') {
-        return done(null, false);
-      } else if (client.id == 'cTHROW') {
-        throw new Error('something was thrown');
-      }
-      return done(new Error('something went wrong'));
-    }
-    
-    function issueIDToken(client, user, done) {
-        return done(null, 'idtoken');
-    }
     
     describe('transaction', function() {
+      function issueCode(client, redirectURI, user, done) {
+        if (client.id == 'c123' && redirectURI == 'http://example.com/auth/callback' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something went wrong'));
+      }
+    
+      function issueIDToken(client, user, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -312,6 +308,18 @@ describe('grant.codeIdToken', function() {
     });
     
     describe('transaction with request state', function() {
+      function issueCode(client, redirectURI, user, done) {
+        if (client.id == 'c123' && redirectURI == 'http://example.com/auth/callback' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something went wrong'));
+      }
+    
+      function issueIDToken(client, user, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -340,6 +348,18 @@ describe('grant.codeIdToken', function() {
     });
     
     describe('disallowed transaction', function() {
+      function issueCode(client, redirectURI, user, done) {
+        if (client.id == 'c123' && redirectURI == 'http://example.com/auth/callback' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something went wrong'));
+      }
+    
+      function issueIDToken(client, user, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -367,6 +387,18 @@ describe('grant.codeIdToken', function() {
     });
     
     describe('disallowed transaction with request state', function() {
+      function issueCode(client, redirectURI, user, done) {
+        if (client.id == 'c123' && redirectURI == 'http://example.com/auth/callback' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something went wrong'));
+      }
+    
+      function issueIDToken(client, user, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -395,6 +427,18 @@ describe('grant.codeIdToken', function() {
     });
     
     describe('unauthorized client', function() {
+      function issueCode(client, redirectURI, user, done) {
+        if (client.id == 'cUNAUTHZ') {
+          return done(null, false);
+        }
+        return done(new Error('something went wrong'));
+      }
+    
+      function issueIDToken(client, user, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
       var err;
       
       before(function(done) {
@@ -425,6 +469,18 @@ describe('grant.codeIdToken', function() {
     });
     
     describe('encountering an error while issuing code', function() {
+      function issueCode(client, redirectURI, user, done) {
+        if (client.id == 'cUNAUTHZ') {
+          return done(null, false);
+        }
+        return done(new Error('something went wrong'));
+      }
+    
+      function issueIDToken(client, user, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
       var err;
       
       before(function(done) {
@@ -452,6 +508,18 @@ describe('grant.codeIdToken', function() {
     });
     
     describe('throwing an error while issuing code', function() {
+      function issueCode(client, redirectURI, user, done) {
+        if (client.id == 'cTHROW') {
+          throw new Error('something was thrown');
+        }
+        return done(new Error('something went wrong'));
+      }
+    
+      function issueIDToken(client, user, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
       var err;
       
       before(function(done) {
@@ -479,6 +547,18 @@ describe('grant.codeIdToken', function() {
     });
     
     describe('transaction without redirect URL', function() {
+      function issueCode(client, redirectURI, user, done) {
+        if (client.id == 'c123' && redirectURI == 'http://example.com/auth/callback' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something went wrong'));
+      }
+    
+      function issueIDToken(client, user, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
       var err;
       
       before(function(done) {
