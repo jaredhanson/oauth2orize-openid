@@ -274,7 +274,7 @@ describe('grant.codeIdTokenToken', function() {
   
   describe('decision handling', function() {
     
-    describe.only('transaction', function() {
+    describe('transaction', function() {
       function issueToken(client, user, done) {
         expect(client.id).to.equal('c123');
         expect(user.id).to.equal('u123');
