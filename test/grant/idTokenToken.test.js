@@ -457,7 +457,7 @@ describe('grant.idTokenToken', function() {
       }
       
       function issueIDToken(client, user, areq, accessToken, done) {
-          return done(null, 'idtoken');
+        return done(null, 'idtoken');
       }
       
       
@@ -496,7 +496,7 @@ describe('grant.idTokenToken', function() {
       }
       
       function issueIDToken(client, user, areq, accessToken, done) {
-          return done(null, 'idtoken');
+        return done(null, 'idtoken');
       }
       
       
@@ -536,7 +536,7 @@ describe('grant.idTokenToken', function() {
       }
       
       function issueIDToken(client, user, areq, accessToken, done) {
-          return done(null, 'idtoken');
+        return done(null, 'idtoken');
       }
       
       
@@ -578,7 +578,7 @@ describe('grant.idTokenToken', function() {
       }
       
       function issueIDToken(client, user, areq, accessToken, done) {
-          return done(null, 'idtoken');
+        return done(null, 'idtoken');
       }
       
       
@@ -617,7 +617,7 @@ describe('grant.idTokenToken', function() {
       }
 
       function issueIDToken(client, user, areq, accessToken, done) {
-          return done(null, 'idtoken');
+        return done(null, 'idtoken');
       }
       
       var err;
@@ -655,7 +655,7 @@ describe('grant.idTokenToken', function() {
       }
       
       function issueIDToken(client, user, areq, accessToken, done) {
-          return done(null, 'idtoken');
+        return done(null, 'idtoken');
       }
       
       
@@ -694,7 +694,12 @@ describe('grant.idTokenToken', function() {
     }
     
     function issueIDToken(client, user, areq, accessToken, done) {
-        return done(null, 'idtoken');
+      expect(client.id).to.equal('c123');
+      expect(user.id).to.equal('u123');
+      expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+      expect(accessToken).to.equal('xyz');
+      
+      return done(null, 'idtoken');
     }
     
     describe('transaction with response scope', function() {
@@ -706,7 +711,8 @@ describe('grant.idTokenToken', function() {
             txn.client = { id: 'c123', name: 'Example' };
             txn.redirectURI = 'http://example.com/auth/callback';
             txn.req = {
-              redirectURI: 'http://example.com/auth/callback'
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true, scope: 'foo' };
