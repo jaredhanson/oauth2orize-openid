@@ -90,10 +90,14 @@ describe('authorization request extensions', function() {
       });
       
       it('should parse request', function() {
+        expect(ext.nonce).to.be.undefined;
         expect(ext.display).to.equal('page');
+        expect(ext.prompt).to.be.undefined;
         expect(ext.maxAge).to.be.undefined;
         expect(ext.uiLocales).to.be.undefined;
         expect(ext.claimsLocales).to.be.undefined;
+        expect(ext.idTokenHint).to.be.undefined;
+        expect(ext.loginHint).to.be.undefined;
         expect(ext.acrValues).to.be.undefined;
       });
     });
