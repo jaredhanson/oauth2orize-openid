@@ -265,4 +265,52 @@ describe('grant.codeToken', function() {
     });
   });
   
+  describe('decision handling', function() {
+    
+    describe('transaction', function() {
+      function issueToken(client, user, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        
+        return done(null, 'at-xyz');
+      }
+      
+      function issueCode(client, redirectURI, user, done) {
+        expect(client.id).to.equal('c123');
+        expect(redirectURI).to.equal('http://example.com/auth/callback');
+        expect(user.id).to.equal('u123');
+        
+        return done(null, 'c-123');
+      }
+      
+      
+      var response;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(codeToken(issueToken, issueCode))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#access_token=at-xyz&token_type=Bearer&code=c-123');
+      });
+    });
+    
+  });
+  
 });
