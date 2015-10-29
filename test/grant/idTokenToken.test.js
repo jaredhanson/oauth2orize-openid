@@ -266,26 +266,20 @@ describe('grant.idTokenToken', function() {
   });
   
   describe('decision handling', function() {
-    function issueToken(client, user, done) {
-      if (client.id == 'c123' && user.id == 'u123') {
-        return done(null, 'xyz');
-      } else if (client.id == 'c223' && user.id == 'u123') {
-        return done(null, 'xyz', { 'expires_in': 3600 });
-      } else if (client.id == 'c323' && user.id == 'u123') {
-        return done(null, 'xyz', { 'token_type': 'foo', 'expires_in': 3600 });
-      } else if (client.id == 'cUNAUTHZ') {
-        return done(null, false);
-      } else if (client.id == 'cTHROW') {
-        throw new Error('something was thrown');
-      }
-      return done(new Error('something is wrong'));
-    }
-    
-    function issueIDToken(client, user, done) {
-        return done(null, 'idtoken');
-    }
     
     describe('transaction', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'c123' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -313,6 +307,18 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('transaction with request state', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'c123' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -341,6 +347,18 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('transaction that adds params to response', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'c223' && user.id == 'u123') {
+          return done(null, 'xyz', { 'expires_in': 3600 });
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -368,6 +386,18 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('transaction that adds params including token_type to response', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'c323' && user.id == 'u123') {
+          return done(null, 'xyz', { 'token_type': 'foo', 'expires_in': 3600 });
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -395,6 +425,18 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('disallowed transaction', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'c123' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -422,6 +464,18 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('disallowed transaction with request state', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'c123' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var response;
       
       before(function(done) {
@@ -450,6 +504,18 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('unauthorized client', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'cUNAUTHZ') {
+          return done(null, false);
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var err;
       
       before(function(done) {
@@ -480,6 +546,18 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('encountering an error while issuing token', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'cUNAUTHZ') {
+          return done(null, false);
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var err;
       
       before(function(done) {
@@ -507,6 +585,17 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('throwing an error while issuing token', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'cTHROW') {
+          throw new Error('something was thrown');
+        }
+        return done(new Error('something is wrong'));
+      }
+
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
       var err;
       
       before(function(done) {
@@ -534,6 +623,18 @@ describe('grant.idTokenToken', function() {
     });
     
     describe('transaction without redirect URL', function() {
+      function issueToken(client, user, done) {
+        if (client.id == 'c123' && user.id == 'u123') {
+          return done(null, 'xyz');
+        }
+        return done(new Error('something is wrong'));
+      }
+      
+      function issueIDToken(client, user, done) {
+          return done(null, 'idtoken');
+      }
+      
+      
       var err;
       
       before(function(done) {
