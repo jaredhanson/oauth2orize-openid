@@ -276,7 +276,7 @@ describe('grant.codeIdToken', function() {
         return done(new Error('something went wrong'));
       }
     
-      function issueIDToken(client, user, done) {
+      function issueIDToken(client, user, areq, code, done) {
         return done(null, 'idtoken');
       }
       
@@ -289,7 +289,8 @@ describe('grant.codeIdToken', function() {
             txn.client = { id: 'c123', name: 'Example' };
             txn.redirectURI = 'http://www.example.com/auth/callback';
             txn.req = {
-              redirectURI: 'http://example.com/auth/callback'
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
@@ -315,7 +316,7 @@ describe('grant.codeIdToken', function() {
         return done(new Error('something went wrong'));
       }
     
-      function issueIDToken(client, user, done) {
+      function issueIDToken(client, user, areq, code, done) {
         return done(null, 'idtoken');
       }
       
@@ -329,7 +330,8 @@ describe('grant.codeIdToken', function() {
             txn.redirectURI = 'http://www.example.com/auth/callback';
             txn.req = {
               redirectURI: 'http://example.com/auth/callback',
-              state: 'f1o1o1'
+              state: 'f1o1o1',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
@@ -355,7 +357,7 @@ describe('grant.codeIdToken', function() {
         return done(new Error('something went wrong'));
       }
     
-      function issueIDToken(client, user, done) {
+      function issueIDToken(client, user, areq, code, done) {
         return done(null, 'idtoken');
       }
       
@@ -368,7 +370,8 @@ describe('grant.codeIdToken', function() {
             txn.client = { id: 'c123', name: 'Example' };
             txn.redirectURI = 'http://www.example.com/auth/callback';
             txn.req = {
-              redirectURI: 'http://example.com/auth/callback'
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: false };
@@ -394,7 +397,7 @@ describe('grant.codeIdToken', function() {
         return done(new Error('something went wrong'));
       }
     
-      function issueIDToken(client, user, done) {
+      function issueIDToken(client, user, areq, code, done) {
         return done(null, 'idtoken');
       }
       
@@ -408,7 +411,8 @@ describe('grant.codeIdToken', function() {
             txn.redirectURI = 'http://www.example.com/auth/callback';
             txn.req = {
               redirectURI: 'http://example.com/auth/callback',
-              state: 'f2o2o2'
+              state: 'f2o2o2',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: false };
@@ -434,7 +438,7 @@ describe('grant.codeIdToken', function() {
         return done(new Error('something went wrong'));
       }
     
-      function issueIDToken(client, user, done) {
+      function issueIDToken(client, user, areq, code, done) {
         return done(null, 'idtoken');
       }
       
@@ -447,7 +451,8 @@ describe('grant.codeIdToken', function() {
             txn.client = { id: 'cUNAUTHZ', name: 'Example' };
             txn.redirectURI = 'http://www.example.com/auth/callback';
             txn.req = {
-              redirectURI: 'http://example.com/auth/callback'
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
@@ -476,7 +481,7 @@ describe('grant.codeIdToken', function() {
         return done(new Error('something went wrong'));
       }
     
-      function issueIDToken(client, user, done) {
+      function issueIDToken(client, user, areq, code, done) {
         return done(null, 'idtoken');
       }
       
@@ -489,7 +494,8 @@ describe('grant.codeIdToken', function() {
             txn.client = { id: 'cERROR', name: 'Example' };
             txn.redirectURI = 'http://www.example.com/auth/callback';
             txn.req = {
-              redirectURI: 'http://example.com/auth/callback'
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
@@ -515,7 +521,7 @@ describe('grant.codeIdToken', function() {
         return done(new Error('something went wrong'));
       }
     
-      function issueIDToken(client, user, done) {
+      function issueIDToken(client, user, areq, code, done) {
         return done(null, 'idtoken');
       }
       
@@ -528,7 +534,8 @@ describe('grant.codeIdToken', function() {
             txn.client = { id: 'cTHROW', name: 'Example' };
             txn.redirectURI = 'http://www.example.com/auth/callback';
             txn.req = {
-              redirectURI: 'http://example.com/auth/callback'
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
@@ -554,7 +561,7 @@ describe('grant.codeIdToken', function() {
         return done(new Error('something went wrong'));
       }
     
-      function issueIDToken(client, user, done) {
+      function issueIDToken(client, user, areq, code, done) {
         return done(null, 'idtoken');
       }
       
@@ -566,7 +573,8 @@ describe('grant.codeIdToken', function() {
           .txn(function(txn) {
             txn.client = { id: 'c123', name: 'Example' };
             txn.req = {
-              redirectURI: 'http://example.com/auth/callback'
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
