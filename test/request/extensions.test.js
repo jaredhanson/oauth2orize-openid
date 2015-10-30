@@ -1,5 +1,6 @@
 var chai = require('chai')
-  , extensions = require('../../lib/request/extensions');
+  , extensions = require('../../lib/request/extensions')
+  , qs = require('querystring')
 
 
 describe('authorization request extensions', function() {
@@ -99,6 +100,7 @@ describe('authorization request extensions', function() {
         expect(ext.idTokenHint).to.be.undefined;
         expect(ext.loginHint).to.be.undefined;
         expect(ext.acrValues).to.be.undefined;
+        expect(ext.claims).to.be.undefined;
       });
     });
     
@@ -215,6 +217,60 @@ describe('authorization request extensions', function() {
         expect(ext.acrValues).to.have.length(2);
         expect(ext.acrValues[0]).to.equal('2');
         expect(ext.acrValues[1]).to.equal('1');
+      });
+    });
+    
+    describe('request with claims', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            // http://lists.openid.net/pipermail/openid-specs-mobile-profile/Week-of-Mon-20141124/000070.html
+            req.query = qs.parse('response_type=code&client_id=ABCDEFABCDEFABCDEFABCDEF&scope=openid&redirect_uri=https%3A%2F%2Femail.t-online.de%2F%3Fpf%3D%2Fem&claims=%7B%0A++%22id_token%22%3A%0A++%7B%0A+++%22email%22%3A+%7B%22essential%22%3A+true%7D%0A++%7D%0A%7D')
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should not error', function() {
+        expect(err).to.be.null;
+      });
+      
+      it('should parse request', function() {
+        expect(ext.claims).to.be.an('object');
+        expect(ext.claims.id_token).to.be.an('object');
+        expect(ext.claims.id_token.email).to.be.an('object');
+        expect(ext.claims.id_token.email.essential).to.equal(true);
+      });
+    });
+    
+    describe('request with claims that fail to parse as JSON', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            // http://lists.openid.net/pipermail/openid-specs-mobile-profile/Week-of-Mon-20141124/000070.html
+            req.query = {};
+            req.query.claims = 'xyz';
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Failed to parse claims as JSON');
       });
     });
     
