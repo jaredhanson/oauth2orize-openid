@@ -309,7 +309,7 @@ describe('grant.codeIdToken', function() {
       
       it('should respond', function() {
         expect(response.statusCode).to.equal(302);
-        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback?code=xyz&id_token=idtoken');
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#code=xyz&id_token=idtoken');
       });
     });
     
@@ -355,7 +355,7 @@ describe('grant.codeIdToken', function() {
       
       it('should respond', function() {
         expect(response.statusCode).to.equal(302);
-        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback?code=xyz&id_token=idtoken&state=f1o1o1');
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#code=xyz&id_token=idtoken&state=f1o1o1');
       });
     });
     
@@ -395,7 +395,7 @@ describe('grant.codeIdToken', function() {
       
       it('should respond', function() {
         expect(response.statusCode).to.equal(302);
-        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback?error=access_denied');
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#error=access_denied');
       });
     });
     
@@ -436,7 +436,7 @@ describe('grant.codeIdToken', function() {
       
       it('should respond', function() {
         expect(response.statusCode).to.equal(302);
-        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback?error=access_denied&state=f2o2o2');
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#error=access_denied&state=f2o2o2');
       });
     });
     
