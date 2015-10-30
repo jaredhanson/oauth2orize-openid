@@ -274,6 +274,56 @@ describe('authorization request extensions', function() {
       });
     });
     
+    describe('request with registration', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            req.query = qs.parse('response_type=id_token&client_id=https%3A%2F%2Fclient.example.org%2Fcb&scope=openid%20profile&state=af0ifjsldkj&nonce=n-0S6_WzA2Mj&registration=%7B%22logo_uri%22%3A%22https%3A%2F%2Fclient.example.org%2Flogo.png%22%7D')
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should not error', function() {
+        expect(err).to.be.null;
+      });
+      
+      it('should parse request', function() {
+        expect(ext.registration).to.be.an('object');
+        expect(ext.registration.logo_uri).to.equal('https://client.example.org/logo.png');
+      });
+    });
+    
+    describe('request with registration that fails to parse as JSON', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            req.query = {};
+            req.query.registration = 'xyz';
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Failed to parse registration as JSON');
+      });
+    });
+    
     describe('request with prompt including none with other values', function() {
       var err, ext;
       
