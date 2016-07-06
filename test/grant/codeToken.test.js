@@ -268,9 +268,15 @@ describe('grant.codeToken', function() {
   describe('decision handling', function() {
     
     describe('transaction', function() {
-      function issueToken(client, user, done) {
+      function issueToken(client, user, ares, areq, locals, done) {
         expect(client.id).to.equal('c123');
+        expect(client.name).to.equal('Example');
         expect(user.id).to.equal('u123');
+        expect(user.name).to.equal('Bob');
+        expect(ares.allow).to.equal(true);
+        expect(areq.redirectURI).to.equal('http://example.com/auth/callback');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        expect(locals.foo).to.equal('bar');
         
         return done(null, 'at-xyz');
       }
