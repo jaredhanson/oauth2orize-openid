@@ -269,11 +269,18 @@ describe('grant.codeIdToken', function() {
   describe('decision handling', function() {
     
     describe('transaction', function() {
-      function issueCode(client, redirectURI, user, done) {
-        if (client.id == 'c123' && redirectURI == 'http://example.com/auth/callback' && user.id == 'u123') {
-          return done(null, 'xyz');
-        }
-        return done(new Error('something went wrong'));
+      function issueCode(client, redirectURI, user, ares, areq, locals, done) {
+        expect(client.id).to.equal('c123');
+        expect(client.name).to.equal('Example');
+        expect(redirectURI).to.equal('http://example.com/auth/callback');
+        expect(user.id).to.equal('u123');
+        expect(user.name).to.equal('Bob');
+        expect(ares.allow).to.equal(true);
+        expect(areq.redirectURI).to.equal('http://example.com/auth/callback');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        expect(locals.foo).to.equal('bar');
+
+        return done(null, 'xyz');
       }
     
       function issueIDToken(client, user, areq, code, done) {
@@ -299,6 +306,7 @@ describe('grant.codeIdToken', function() {
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
+            txn.locals = { foo: 'bar' };
           })
           .end(function(res) {
             response = res;
@@ -314,11 +322,19 @@ describe('grant.codeIdToken', function() {
     });
     
     describe('transaction with request state', function() {
-      function issueCode(client, redirectURI, user, done) {
-        if (client.id == 'c123' && redirectURI == 'http://example.com/auth/callback' && user.id == 'u123') {
-          return done(null, 'xyz');
-        }
-        return done(new Error('something went wrong'));
+      function issueCode(client, redirectURI, user, ares, areq, locals, done) {
+        expect(client.id).to.equal('c123');
+        expect(client.name).to.equal('Example');
+        expect(redirectURI).to.equal('http://example.com/auth/callback');
+        expect(user.id).to.equal('u123');
+        expect(user.name).to.equal('Bob');
+        expect(ares.allow).to.equal(true);
+        expect(areq.redirectURI).to.equal('http://example.com/auth/callback');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        expect(areq.state).to.equal('f1o1o1');
+        expect(locals.foo).to.equal('bar');
+
+        return done(null, 'xyz');
       }
     
       function issueIDToken(client, user, areq, code, done) {
@@ -345,6 +361,7 @@ describe('grant.codeIdToken', function() {
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
+            txn.locals = { foo: 'bar' };
           })
           .end(function(res) {
             response = res;

@@ -275,10 +275,16 @@ describe('grant.codeToken', function() {
         return done(null, 'at-xyz');
       }
       
-      function issueCode(client, redirectURI, user, done) {
+      function issueCode(client, redirectURI, user, ares, areq, locals, done) {
         expect(client.id).to.equal('c123');
+        expect(client.name).to.equal('Example');
         expect(redirectURI).to.equal('http://example.com/auth/callback');
         expect(user.id).to.equal('u123');
+        expect(user.name).to.equal('Bob');
+        expect(ares.allow).to.equal(true);
+        expect(areq.redirectURI).to.equal('http://example.com/auth/callback');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        expect(locals.foo).to.equal('bar');
         
         return done(null, 'c-123');
       }
@@ -297,6 +303,7 @@ describe('grant.codeToken', function() {
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
+            txn.locals = { foo: 'bar' };
           })
           .end(function(res) {
             response = res;
