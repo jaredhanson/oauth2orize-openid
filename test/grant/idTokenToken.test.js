@@ -268,11 +268,17 @@ describe('grant.idTokenToken', function() {
   describe('decision handling', function() {
     
     describe('transaction', function() {
-      function issueToken(client, user, done) {
-        if (client.id == 'c123' && user.id == 'u123') {
-          return done(null, 'xyz');
-        }
-        return done(new Error('something is wrong'));
+      function issueToken(client, user, ares, areq, locals, done) {
+        expect(client.id).to.equal('c123');
+        expect(client.name).to.equal('Example');
+        expect(user.id).to.equal('u123');
+        expect(user.name).to.equal('Bob');
+        expect(ares.allow).to.equal(true);
+        expect(areq.redirectURI).to.equal('http://example.com/auth/callback');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        expect(locals.foo).to.equal('bar');
+
+        return done(null, 'xyz');
       }
       
       function issueIDToken(client, user, areq, accessToken, done) {
@@ -298,6 +304,7 @@ describe('grant.idTokenToken', function() {
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: true };
+            txn.locals = { foo: 'bar' };
           })
           .end(function(res) {
             response = res;
