@@ -281,11 +281,11 @@ describe('grant.idTokenToken', function() {
         return done(null, 'xyz');
       }
       
-      function issueIDToken(client, user, areq, accessToken, done) {
+      function issueIDToken(client, user, ares, areq, opts, done) {
         expect(client.id).to.equal('c123');
         expect(user.id).to.equal('u123');
         expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(accessToken).to.equal('xyz');
+        expect(opts.accessToken).to.equal('xyz');
         
         return done(null, 'idtoken');
       }
@@ -327,11 +327,11 @@ describe('grant.idTokenToken', function() {
         return done(new Error('something is wrong'));
       }
       
-      function issueIDToken(client, user, areq, accessToken, done) {
+      function issueIDToken(client, user, ares, areq, opts, done) {
         expect(client.id).to.equal('c123');
         expect(user.id).to.equal('u123');
         expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(accessToken).to.equal('xyz');
+        expect(opts.accessToken).to.equal('xyz');
         
         return done(null, 'idtoken');
       }
@@ -373,11 +373,11 @@ describe('grant.idTokenToken', function() {
         return done(new Error('something is wrong'));
       }
       
-      function issueIDToken(client, user, areq, accessToken, done) {
+      function issueIDToken(client, user, ares, areq, opts, done) {
         expect(client.id).to.equal('c223');
         expect(user.id).to.equal('u123');
         expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(accessToken).to.equal('xyz');
+        expect(opts.accessToken).to.equal('xyz');
         
         return done(null, 'idtoken');
       }
@@ -418,11 +418,11 @@ describe('grant.idTokenToken', function() {
         return done(new Error('something is wrong'));
       }
       
-      function issueIDToken(client, user, areq, accessToken, done) {
+      function issueIDToken(client, user, ares, areq, opts, done) {
         expect(client.id).to.equal('c323');
         expect(user.id).to.equal('u123');
         expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(accessToken).to.equal('xyz');
+        expect(opts.accessToken).to.equal('xyz');
         
         return done(null, 'idtoken');
       }
@@ -700,11 +700,11 @@ describe('grant.idTokenToken', function() {
       return done(new Error('something is wrong'));
     }
     
-    function issueIDToken(client, user, areq, accessToken, done) {
+    function issueIDToken(client, user, ares, areq, opts, done) {
       expect(client.id).to.equal('c123');
       expect(user.id).to.equal('u123');
       expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-      expect(accessToken).to.equal('xyz');
+      expect(opts.accessToken).to.equal('xyz');
       
       return done(null, 'idtoken');
     }

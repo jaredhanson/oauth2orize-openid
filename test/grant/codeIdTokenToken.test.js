@@ -302,12 +302,12 @@ describe('grant.codeIdTokenToken', function() {
         return done(null, 'c-123');
       }
       
-      function issueIDToken(client, user, areq, accessToken, code, done) {
+      function issueIDToken(client, user, ares, areq, opts, done) {
         expect(client.id).to.equal('c123');
         expect(user.id).to.equal('u123');
         expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(accessToken).to.equal('at-xyz');
-        expect(code).to.equal('c-123');
+        expect(opts.accessToken).to.equal('at-xyz');
+        expect(opts.authorizationCode).to.equal('c-123');
         
         return done(null, 'idtoken');
       }

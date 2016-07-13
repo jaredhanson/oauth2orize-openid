@@ -283,11 +283,12 @@ describe('grant.codeIdToken', function() {
         return done(null, 'xyz');
       }
     
-      function issueIDToken(client, user, areq, code, done) {
+      function issueIDToken(client, user, ares, areq, opts, done) {
+        // TODO: assert over ares
         expect(client.id).to.equal('c123');
         expect(user.id).to.equal('u123');
         expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(code).to.equal('xyz');
+        expect(opts.authorizationCode).to.equal('xyz');
         
         return done(null, 'idtoken');
       }
@@ -337,11 +338,11 @@ describe('grant.codeIdToken', function() {
         return done(null, 'xyz');
       }
     
-      function issueIDToken(client, user, areq, code, done) {
+      function issueIDToken(client, user, ares, areq, opts, done) {
         expect(client.id).to.equal('c123');
         expect(user.id).to.equal('u123');
         expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(code).to.equal('xyz');
+        expect(opts.authorizationCode).to.equal('xyz');
         
         return done(null, 'idtoken');
       }
