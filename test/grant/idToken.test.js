@@ -256,6 +256,34 @@ describe('grant.idToken', function() {
         expect(err.code).to.equal('invalid_request');
       });
     });
+    
+    describe('request with scope parameter that is not a string', function() {
+       var err, out;
+      
+       before(function(done) {
+         chai.oauth2orize.grant(idToken(issue))
+           .req(function(req) {
+             req.query = {};
+             req.query.client_id = 'c123';
+             req.query.redirect_uri = 'http://example.com/auth/callback';
+             req.query.state = 'f1o1o1';
+             req.query.scope = ['read', 'write'];
+           })
+           .parse(function(e, o) {
+             err = e;
+             out = o;
+             done();
+           })
+           .authorize();
+       });
+      
+       it('should error', function() {
+         expect(err).to.be.an.instanceOf(Error);
+         expect(err.constructor.name).to.equal('AuthorizationError');
+         expect(err.message).to.equal('Invalid parameter: scope must be a string');
+         expect(err.code).to.equal('invalid_request');
+       });
+     });
   });
   
   describe('decision handling', function() {
@@ -294,6 +322,119 @@ describe('grant.idToken', function() {
       it('should respond', function() {
         expect(response.statusCode).to.equal(302);
         expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#id_token=idtoken');
+      });
+    });
+    
+    describe('transaction with request state', function() {
+      function issueIDToken(client, user, areq, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        
+        return done(null, 'idtoken');
+      }
+      
+      
+      var response;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj',
+              state: 'f1o1o1'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#id_token=idtoken&state=f1o1o1');
+      });
+    });
+    
+    describe('disallowed transaction', function() {
+      function issueIDToken(client, user, areq, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        
+        return done(null, 'idtoken');
+      }
+      
+      
+      var response;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: false };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#error=access_denied');
+      });
+    });
+    
+    describe('disallowed transaction with request state', function() {
+      function issueIDToken(client, user, areq, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        
+        return done(null, 'idtoken');
+      }
+      
+      
+      var response;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj',
+              state: 'f1o1o1'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: false };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#error=access_denied&state=f1o1o1');
       });
     });
     
