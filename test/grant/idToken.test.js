@@ -286,6 +286,7 @@ describe('grant.idToken', function() {
      });
   });
   
+  
   describe('decision handling', function() {
     
     describe('transaction', function() {
@@ -438,6 +439,85 @@ describe('grant.idToken', function() {
       });
     });
     
+    describe('transaction processed with authorization response', function() {
+      function issueIDToken(client, user, ares, areq, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(ares.scope[0]).to.equal('profile');
+        expect(ares.scope[1]).to.equal('email');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        
+        return done(null, 'idtoken');
+      }
+      
+      
+      var response;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true, scope: [ 'profile', 'email' ] };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#id_token=idtoken');
+      });
+    });
+    
+    describe('transaction processed with bound parameters', function() {
+      function issueIDToken(client, user, ares, areq, bound, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(ares.scope[0]).to.equal('profile');
+        expect(ares.scope[1]).to.equal('email');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        expect(bound).to.equal(undefined);
+        
+        return done(null, 'idtoken');
+      }
+      
+      
+      var response;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true, scope: [ 'profile', 'email' ] };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://www.example.com/auth/callback#id_token=idtoken');
+      });
+    });
+    
     describe('unauthorized client', function() {
       function issueIDToken(client, user, areq, done) {
         return done(null, false);
@@ -474,7 +554,7 @@ describe('grant.idToken', function() {
       });
     });
     
-    describe('encountering an error while issuing code', function() {
+    describe('encountering an error while issuing ID token', function() {
       function issueIDToken(client, user, areq, done) {
         return done(new Error('something went wrong'));
       }
@@ -507,7 +587,7 @@ describe('grant.idToken', function() {
       });
     });
     
-    describe('throwing an error while issuing code', function() {
+    describe('throwing an error while issuing ID token', function() {
       function issueIDToken(client, user, areq, done) {
         return done(new Error('something was thrown'));
       }
@@ -537,6 +617,38 @@ describe('grant.idToken', function() {
       it('should error', function() {
         expect(err).to.be.an.instanceOf(Error);
         expect(err.message).to.equal('something was thrown');
+      });
+    });
+    
+    describe('transaction without redirect URL', function() {
+      function issueIDToken(client, user, areq, done) {
+        return done(new Error('something was thrown'));
+      }
+      
+      
+      var err;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true };
+          })
+          .next(function(e) {
+            err = e;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('Unable to issue redirect for OAuth 2.0 transaction');
       });
     });
     
