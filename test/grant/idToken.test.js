@@ -438,6 +438,108 @@ describe('grant.idToken', function() {
       });
     });
     
+    describe('unauthorized client', function() {
+      function issueIDToken(client, user, areq, done) {
+        return done(null, false);
+      }
+      
+      
+      var err;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true };
+          })
+          .next(function(e) {
+            err = e;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Request denied by authorization server');
+        expect(err.code).to.equal('access_denied');
+        expect(err.status).to.equal(403);
+      });
+    });
+    
+    describe('encountering an error while issuing code', function() {
+      function issueIDToken(client, user, areq, done) {
+        return done(new Error('something went wrong'));
+      }
+      
+      
+      var err;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true };
+          })
+          .next(function(e) {
+            err = e;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('something went wrong');
+      });
+    });
+    
+    describe('throwing an error while issuing code', function() {
+      function issueIDToken(client, user, areq, done) {
+        return done(new Error('something was thrown'));
+      }
+      
+      
+      var err;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idToken(issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://www.example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true };
+          })
+          .next(function(e) {
+            err = e;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.message).to.equal('something was thrown');
+      });
+    });
+    
   });
   
 });
