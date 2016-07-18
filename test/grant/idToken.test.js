@@ -589,7 +589,7 @@ describe('grant.idToken', function() {
     
     describe('throwing an error while issuing ID token', function() {
       function issueIDToken(client, user, areq, done) {
-        return done(new Error('something was thrown'));
+        throw new Error('something was thrown');
       }
       
       
