@@ -293,6 +293,54 @@ describe('grant.idTokenToken', function() {
     });
   });
   
+  describe('issuing an access token', function() {
+    
+    describe('based on authorization response', function() {
+      function issueToken(client, user, ares, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(ares.scope).to.equal('foo');
+        
+        return done(null, 'xyz');
+      }
+    
+      function issueIDToken(client, user, areq, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+      
+        return done(null, 'idtoken');
+      }
+      
+      var response;
+    
+      before(function(done) {
+        chai.oauth2orize.grant(idTokenToken(issueToken, issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true, scope: 'foo' };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+    
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#access_token=xyz&token_type=Bearer&id_token=idtoken');
+      });
+    });
+    
+  });
+  
   describe('decision handling', function() {
     
     describe('transaction', function() {
@@ -716,52 +764,6 @@ describe('grant.idTokenToken', function() {
       it('should error', function() {
         expect(err).to.be.an.instanceOf(Error);
         expect(err.message).to.equal('Unable to issue redirect for OAuth 2.0 transaction');
-      });
-    });
-  });
-  
-  describe('decision handling with user response', function() {
-    function issueToken(client, user, ares, done) {
-      if (client.id == 'c123' && user.id == 'u123' && ares.scope == 'foo') {
-        return done(null, 'xyz');
-      }
-      return done(new Error('something is wrong'));
-    }
-    
-    function issueIDToken(client, user, ares, areq, opts, done) {
-      expect(client.id).to.equal('c123');
-      expect(user.id).to.equal('u123');
-      expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-      expect(opts.accessToken).to.equal('xyz');
-      
-      return done(null, 'idtoken');
-    }
-    
-    describe('transaction with response scope', function() {
-      var response;
-      
-      before(function(done) {
-        chai.oauth2orize.grant(idTokenToken(issueToken, issueIDToken))
-          .txn(function(txn) {
-            txn.client = { id: 'c123', name: 'Example' };
-            txn.redirectURI = 'http://example.com/auth/callback';
-            txn.req = {
-              redirectURI: 'http://example.com/auth/callback',
-              nonce: 'n-0S6_WzA2Mj'
-            };
-            txn.user = { id: 'u123', name: 'Bob' };
-            txn.res = { allow: true, scope: 'foo' };
-          })
-          .end(function(res) {
-            response = res;
-            done();
-          })
-          .decide();
-      });
-      
-      it('should respond', function() {
-        expect(response.statusCode).to.equal(302);
-        expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#access_token=xyz&token_type=Bearer&id_token=idtoken');
       });
     });
   });
