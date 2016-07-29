@@ -375,6 +375,46 @@ describe('grant.idTokenToken', function() {
       });
     });
     
+    describe('based on client, user, and authorization response, that adds additional parameters including token_type', function() {
+      function issueToken(client, user, ares, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(ares.scope).to.equal('foo');
+        
+        return done(null, 'xyz', { 'token_type': 'foo', 'expires_in': 3600 });
+      }
+    
+      function issueIDToken(client, user, areq, done) {
+        return done(null, 'idtoken');
+      }
+      
+      var response;
+    
+      before(function(done) {
+        chai.oauth2orize.grant(idTokenToken(issueToken, issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true, scope: 'foo' };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+    
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#access_token=xyz&token_type=foo&expires_in=3600&id_token=idtoken');
+      });
+    });
+    
     describe('based on client, user, and authorization response, while preserving state', function() {
       function issueToken(client, user, ares, done) {
         expect(client.id).to.equal('c123');
@@ -556,51 +596,6 @@ describe('grant.idTokenToken', function() {
   });
   
   describe('decision handling', function() {
-    
-    describe('transaction that adds params including token_type to response', function() {
-      function issueToken(client, user, done) {
-        if (client.id == 'c323' && user.id == 'u123') {
-          return done(null, 'xyz', { 'token_type': 'foo', 'expires_in': 3600 });
-        }
-        return done(new Error('something is wrong'));
-      }
-      
-      function issueIDToken(client, user, ares, areq, opts, done) {
-        expect(client.id).to.equal('c323');
-        expect(user.id).to.equal('u123');
-        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(opts.accessToken).to.equal('xyz');
-        
-        return done(null, 'idtoken');
-      }
-      
-      
-      var response;
-      
-      before(function(done) {
-        chai.oauth2orize.grant(idTokenToken(issueToken, issueIDToken))
-          .txn(function(txn) {
-            txn.client = { id: 'c323', name: 'Example' };
-            txn.redirectURI = 'http://example.com/auth/callback';
-            txn.req = {
-              redirectURI: 'http://example.com/auth/callback',
-              nonce: 'n-0S6_WzA2Mj'
-            };
-            txn.user = { id: 'u123', name: 'Bob' };
-            txn.res = { allow: true };
-          })
-          .end(function(res) {
-            response = res;
-            done();
-          })
-          .decide();
-      });
-      
-      it('should respond', function() {
-        expect(response.statusCode).to.equal(302);
-        expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#access_token=xyz&token_type=foo&expires_in=3600&id_token=idtoken');
-      });
-    });
     
     describe('disallowed transaction', function() {
       function issueToken(client, user, done) {
