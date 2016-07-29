@@ -595,30 +595,25 @@ describe('grant.idTokenToken', function() {
     
   });
   
-  describe('decision handling', function() {
+  describe('generic responses', function() {
     
-    describe('disallowed transaction', function() {
-      function issueToken(client, user, done) {
-        if (client.id == 'c123' && user.id == 'u123') {
-          return done(null, 'xyz');
-        }
-        return done(new Error('something is wrong'));
+    describe('that was not approved by user', function() {
+      function issueToken(client, user, ares, done) {
       }
-      
-      function issueIDToken(client, user, areq, accessToken, done) {
-        return done(null, 'idtoken');
+    
+      function issueIDToken(client, user, areq, done) {
       }
-      
       
       var response;
-      
+    
       before(function(done) {
         chai.oauth2orize.grant(idTokenToken(issueToken, issueIDToken))
           .txn(function(txn) {
             txn.client = { id: 'c123', name: 'Example' };
             txn.redirectURI = 'http://example.com/auth/callback';
             txn.req = {
-              redirectURI: 'http://example.com/auth/callback'
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
             };
             txn.user = { id: 'u123', name: 'Bob' };
             txn.res = { allow: false };
@@ -629,28 +624,22 @@ describe('grant.idTokenToken', function() {
           })
           .decide();
       });
-      
+    
       it('should respond', function() {
         expect(response.statusCode).to.equal(302);
         expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#error=access_denied');
       });
     });
     
-    describe('disallowed transaction with request state', function() {
-      function issueToken(client, user, done) {
-        if (client.id == 'c123' && user.id == 'u123') {
-          return done(null, 'xyz');
-        }
-        return done(new Error('something is wrong'));
+    describe('that was not approved by user, while preserving state', function() {
+      function issueToken(client, user, ares, done) {
       }
-      
-      function issueIDToken(client, user, areq, accessToken, done) {
-        return done(null, 'idtoken');
+    
+      function issueIDToken(client, user, areq, done) {
       }
-      
       
       var response;
-      
+    
       before(function(done) {
         chai.oauth2orize.grant(idTokenToken(issueToken, issueIDToken))
           .txn(function(txn) {
@@ -658,6 +647,7 @@ describe('grant.idTokenToken', function() {
             txn.redirectURI = 'http://example.com/auth/callback';
             txn.req = {
               redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj',
               state: 'f2o2o2'
             };
             txn.user = { id: 'u123', name: 'Bob' };
@@ -669,12 +659,17 @@ describe('grant.idTokenToken', function() {
           })
           .decide();
       });
-      
+    
       it('should respond', function() {
         expect(response.statusCode).to.equal(302);
         expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#error=access_denied&state=f2o2o2');
       });
     });
+    
+  });
+  
+  
+  describe('decision handling', function() {
     
     describe('unauthorized client', function() {
       function issueToken(client, user, done) {
