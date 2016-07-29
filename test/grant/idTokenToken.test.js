@@ -295,7 +295,7 @@ describe('grant.idTokenToken', function() {
   
   describe('issuing an access token', function() {
     
-    describe('based on authorization response', function() {
+    describe('based on client, user, and authorization response', function() {
       function issueToken(client, user, ares, done) {
         expect(client.id).to.equal('c123');
         expect(user.id).to.equal('u123');
@@ -305,10 +305,6 @@ describe('grant.idTokenToken', function() {
       }
     
       function issueIDToken(client, user, areq, done) {
-        expect(client.id).to.equal('c123');
-        expect(user.id).to.equal('u123');
-        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-      
         return done(null, 'idtoken');
       }
       
@@ -339,11 +335,7 @@ describe('grant.idTokenToken', function() {
       });
     });
     
-  });
-  
-  describe('decision handling', function() {
-    
-    describe('transaction', function() {
+    describe('based on client, user, authorization request, authorization response, and transaction locals', function() {
       function issueToken(client, user, ares, areq, locals, done) {
         expect(client.id).to.equal('c123');
         expect(client.name).to.equal('Example');
@@ -358,10 +350,51 @@ describe('grant.idTokenToken', function() {
       }
       
       function issueIDToken(client, user, ares, areq, opts, done) {
+        return done(null, 'idtoken');
+      }
+      
+      
+      var response;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idTokenToken(issueToken, issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true };
+            txn.locals = { foo: 'bar' };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#access_token=xyz&token_type=Bearer&id_token=idtoken');
+      });
+    });
+    
+  });
+  
+  describe('issuing an ID token', function() {
+    
+    describe('based on client, user, and authorization request', function() {
+      function issueToken(client, user, ares, done) {
+        return done(null, 'xyz');
+      }
+      
+      function issueIDToken(client, user, areq, done) {
         expect(client.id).to.equal('c123');
         expect(user.id).to.equal('u123');
         expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
-        expect(opts.accessToken).to.equal('xyz');
         
         return done(null, 'idtoken');
       }
@@ -394,6 +427,54 @@ describe('grant.idTokenToken', function() {
         expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#access_token=xyz&token_type=Bearer&id_token=idtoken');
       });
     });
+    
+    describe('based on client, user, authorization response, authorization request, and bound parameters', function() {
+      function issueToken(client, user, ares, done) {
+        return done(null, 'xyz');
+      }
+      
+      function issueIDToken(client, user, ares, areq, bound, done) {
+        expect(client.id).to.equal('c123');
+        expect(user.id).to.equal('u123');
+        expect(ares.allow).to.equal(true);
+        expect(areq.nonce).to.equal('n-0S6_WzA2Mj');
+        expect(bound.accessToken).to.equal('xyz');
+        
+        return done(null, 'idtoken');
+      }
+      
+      
+      var response;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(idTokenToken(issueToken, issueIDToken))
+          .txn(function(txn) {
+            txn.client = { id: 'c123', name: 'Example' };
+            txn.redirectURI = 'http://example.com/auth/callback';
+            txn.req = {
+              redirectURI: 'http://example.com/auth/callback',
+              nonce: 'n-0S6_WzA2Mj'
+            };
+            txn.user = { id: 'u123', name: 'Bob' };
+            txn.res = { allow: true };
+            txn.locals = { foo: 'bar' };
+          })
+          .end(function(res) {
+            response = res;
+            done();
+          })
+          .decide();
+      });
+      
+      it('should respond', function() {
+        expect(response.statusCode).to.equal(302);
+        expect(response.getHeader('Location')).to.equal('http://example.com/auth/callback#access_token=xyz&token_type=Bearer&id_token=idtoken');
+      });
+    });
+    
+  });
+  
+  describe('decision handling', function() {
     
     describe('transaction with request state', function() {
       function issueToken(client, user, done) {
