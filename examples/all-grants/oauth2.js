@@ -57,7 +57,7 @@ server.grant(oauth2orize_ext.grant.idTokenToken(
 
     done(null, token);
   },
-  function(client, user, done){
+  function(client, user, req, done){
     var id_token;
     // Do your lookup/token generation.
     // ... id_token =
