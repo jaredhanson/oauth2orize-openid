@@ -7,7 +7,7 @@
 
 ## Examples
 
-This [example](https://github.com/jaredhanson/oauth2orize-openid/tree/master/examples/all-grants) demonstrates
+This [example](https://github.com/gerges-beshay/oauth2orize-openid-examples) demonstrates
 basic usage of the api.
 
 ## Credits
