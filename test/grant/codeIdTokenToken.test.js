@@ -270,6 +270,33 @@ describe('grant.codeIdTokenToken', function() {
         expect(err.code).to.equal('invalid_request');
       });
     });
+
+    describe('request with invalid client_id parameter', function() {
+      var err, out;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(codeIdTokenToken(issueToken, issueCode, issueIDToken))
+          .req(function(req) {
+            req.query = {};
+            req.query.client_id = ['c123', 'c123'];
+            req.query.redirect_uri = 'http://example.com/auth/callback';
+            req.query.state = 'f1o1o1';
+          })
+          .parse(function(e, o) {
+            err = e;
+            out = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Invalid parameter: client_id must be a string');
+        expect(err.code).to.equal('invalid_request');
+      });
+    });
   });
   
   describe('decision handling', function() {
