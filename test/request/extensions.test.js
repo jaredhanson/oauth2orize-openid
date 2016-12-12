@@ -323,6 +323,150 @@ describe('authorization request extensions', function() {
         expect(err.message).to.equal('Failed to parse registration as JSON');
       });
     });
+
+    describe('request with nonce of wrong type', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            req.query = {};
+            req.query.nonce = ['uvw', 'xyz'];
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Failed to parse nonce as string');
+      });
+    });
+
+    describe('request with display of wrong type', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            req.query = {};
+            req.query.display = ['uvw', 'xyz'];
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Failed to parse display as string');
+      });
+    });
+
+    describe('request with prompt of wrong type', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            req.query = {};
+            req.query.prompt = ['uvw', 'xyz'];
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Failed to parse prompt as string');
+      });
+    });
+
+    describe('request with ui_locales of wrong type', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            req.query = {};
+            req.query.ui_locales = ['uvw', 'xyz'];
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Failed to parse ui_locales as string');
+      });
+    });
+
+    describe('request with claims_locales of wrong type', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            req.query = {};
+            req.query.claims_locales = ['uvw', 'xyz'];
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Failed to parse claims_locales as string');
+      });
+    });
+
+    describe('request with acr_values of wrong type', function() {
+      var err, ext;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(extensions())
+          .req(function(req) {
+            req.query = {};
+            req.query.acr_values = ['uvw', 'xyz'];
+          })
+          .parse(function(e, o) {
+            err = e;
+            ext = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should throw error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Failed to parse acr_values as string');
+      });
+    });
     
     describe('request with prompt including none with other values', function() {
       var err, ext;
