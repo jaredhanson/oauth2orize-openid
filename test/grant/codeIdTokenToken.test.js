@@ -50,6 +50,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query.client_id = 'c123';
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
           })
           .parse(function(e, o) {
             err = e;
@@ -68,6 +69,7 @@ describe('grant.codeIdTokenToken', function() {
         expect(out.redirectURI).to.equal('http://example.com/auth/callback');
         expect(out.scope).to.be.undefined;
         expect(out.state).to.equal('f1o1o1');
+        expect(out.nonce).to.equal('n123');
       });
     });
     
@@ -82,6 +84,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.scope = 'read';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
           })
           .parse(function(e, o) {
             err = e;
@@ -102,6 +105,7 @@ describe('grant.codeIdTokenToken', function() {
         expect(out.scope).to.have.length(1);
         expect(out.scope[0]).to.equal('read');
         expect(out.state).to.equal('f1o1o1');
+        expect(out.nonce).to.equal('n123');
       });
     });
     
@@ -116,6 +120,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.scope = 'read write';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
           })
           .parse(function(e, o) {
             err = e;
@@ -137,6 +142,7 @@ describe('grant.codeIdTokenToken', function() {
         expect(out.scope[0]).to.equal('read');
         expect(out.scope[1]).to.equal('write');
         expect(out.state).to.equal('f1o1o1');
+        expect(out.nonce).to.equal('n123');
       });
     });
     
@@ -151,6 +157,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.scope = 'read,write';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
           })
           .parse(function(e, o) {
             err = e;
@@ -172,6 +179,7 @@ describe('grant.codeIdTokenToken', function() {
         expect(out.scope[0]).to.equal('read');
         expect(out.scope[1]).to.equal('write');
         expect(out.state).to.equal('f1o1o1');
+        expect(out.nonce).to.equal('n123');
       });
     });
     
@@ -186,6 +194,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.scope = 'read write';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
           })
           .parse(function(e, o) {
             err = e;
@@ -207,6 +216,7 @@ describe('grant.codeIdTokenToken', function() {
         expect(out.scope[0]).to.equal('read');
         expect(out.scope[1]).to.equal('write');
         expect(out.state).to.equal('f1o1o1');
+        expect(out.nonce).to.equal('n123');
       });
     });
     
@@ -221,6 +231,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.scope = 'read,write';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
           })
           .parse(function(e, o) {
             err = e;
@@ -242,6 +253,7 @@ describe('grant.codeIdTokenToken', function() {
         expect(out.scope[0]).to.equal('read');
         expect(out.scope[1]).to.equal('write');
         expect(out.state).to.equal('f1o1o1');
+        expect(out.nonce).to.equal('n123');
       });
     });
     
@@ -254,6 +266,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query = {};
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
           })
           .parse(function(e, o) {
             err = e;
@@ -281,6 +294,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query.client_id = ['c123', 'c123'];
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
           })
           .parse(function(e, o) {
             err = e;
@@ -298,6 +312,61 @@ describe('grant.codeIdTokenToken', function() {
       });
     });
 
+    describe('with missing nonce parameter', function() {
+      var err, out;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(codeIdTokenToken(issueToken, issueCode, issueIDToken))
+          .req(function(req) {
+            req.query = {};
+            req.query.client_id = 'c123';
+            req.query.redirect_uri = 'http://example.com/auth/callback';
+            req.query.state = 'f1o1o1';
+          })
+          .parse(function(e, o) {
+            err = e;
+            out = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Missing required parameter: nonce');
+        expect(err.code).to.equal('invalid_request');
+      });
+    });
+
+    describe('request with invalid nonce parameter', function() {
+      var err, out;
+      
+      before(function(done) {
+        chai.oauth2orize.grant(codeIdTokenToken(issueToken, issueCode, issueIDToken))
+          .req(function(req) {
+            req.query = {};
+            req.query.client_id = 'c123';
+            req.query.redirect_uri = 'http://example.com/auth/callback';
+            req.query.state = 'f1o1o1';
+            req.query.nonce = ['n123', 'n123'];
+          })
+          .parse(function(e, o) {
+            err = e;
+            out = o;
+            done();
+          })
+          .authorize();
+      });
+      
+      it('should error', function() {
+        expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.message).to.equal('Invalid parameter: nonce must be a string');
+        expect(err.code).to.equal('invalid_request');
+      });
+    });
+
     describe('with scope parameter that is not a string', function() {
       var err, out;
 
@@ -308,6 +377,7 @@ describe('grant.codeIdTokenToken', function() {
             req.query.client_id = 'c123';
             req.query.redirect_uri = 'http://example.com/auth/callback';
             req.query.state = 'f1o1o1';
+            req.query.nonce = 'n123';
             req.query.scope = ['read', 'write'];
           })
           .parse(function(e, o) {
