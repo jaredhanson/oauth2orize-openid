@@ -679,6 +679,8 @@ describe('grant.idToken', function() {
       
       it('should error', function() {
         expect(err).to.be.an.instanceOf(Error);
+        expect(err.constructor.name).to.equal('AuthorizationError');
+        expect(err.code).to.equal('server_error');
         expect(err.message).to.equal('Unable to issue redirect for OAuth 2.0 transaction');
       });
     });
