@@ -3,12 +3,6 @@
 [OAuth2orize](https://github.com/jaredhanson/oauth2orize) extensions providing
 support for [OpenID Connect](https://openid.net/connect/).
 
----
-
-<p align="center"><a href="//pluralsight.pxf.io/c/1312135/448522/7490">Start a 10-day free trial at Pluralsight - Over 5,000 Courses Available</a></p>
-
----
-
 ## Examples
 
 This [example](https://github.com/gerges-beshay/oauth2orize-openid-examples) demonstrates
