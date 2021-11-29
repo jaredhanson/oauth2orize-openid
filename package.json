@@ -21,20 +21,24 @@
   "author": {
     "name": "Jared Hanson",
     "email": "jaredhanson@gmail.com",
-    "url": "http://www.jaredhanson.net/"
+    "url": "https://www.jaredhanson.me/"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/jaredhanson/oauth2orize-openid.git"
   },
   "bugs": {
-    "url": "http://github.com/jaredhanson/oauth2orize-openid/issues"
+    "url": "https://github.com/jaredhanson/oauth2orize-openid/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/jaredhanson"
   },
   "license": "MIT",
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://opensource.org/licenses/MIT"
+      "url": "https://opensource.org/licenses/MIT"
     }
   ],
   "main": "./lib",
