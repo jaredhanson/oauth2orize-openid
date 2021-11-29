@@ -1,6 +1,6 @@
 {
   "name": "oauth2orize-openid",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Extensions to support OpenID Connect with OAuth2orize.",
   "keywords": [
     "openid",
